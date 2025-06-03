@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import yfinance as yf
 import requests
+import matplotlib.pyplot as plt
 from run_pipeline import run_agent_pipeline
 from test_trader import run_trader_simulation
 
@@ -10,7 +11,36 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 
 st.set_page_config(page_title="FinGen AI Dashboard", layout="centered")
-st.title("🤖 FinGen AI: Autonomous Trading Agent")
+st.title("🤖 Justin's Finance AI: Autonomous Trading Agent")
+
+# === Fetch Return Data ===
+def fetch_returns_plot(ticker, period="5y", freq="Y"):
+    data = yf.Ticker(ticker).history(period=period)
+    if data.empty:
+        return None
+
+    if freq == "Y":
+        resampled = data["Close"].resample("Y").last()
+        title = "Year-over-Year"
+    elif freq == "Q":
+        resampled = data["Close"].resample("Q").last()
+        title = "Quarter-over-Quarter"
+    elif freq == "M":
+        resampled = data["Close"].resample("M").last()
+        title = "Month-over-Month"
+    else:
+        return None
+
+    returns = resampled.pct_change().dropna() * 100
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    returns.plot(kind="bar", ax=ax, color="skyblue", edgecolor="black")
+    ax.set_title(f"{ticker} {title} Returns")
+    ax.set_ylabel("Return (%)")
+    ax.set_xlabel("Period")
+    ax.grid(True)
+    plt.tight_layout()
+    return fig
 
 # === Cached Ticker Search ===
 @st.cache_data(show_spinner=False)
@@ -19,8 +49,7 @@ def search_tickers_live(query):
         url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}"
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers)
-        data = response.json()
-        matches = data.get("quotes", [])
+        matches = response.json().get("quotes", [])
         suggestions = []
         for item in matches:
             if "symbol" in item and "shortname" in item:
@@ -65,10 +94,19 @@ if query:
 else:
     st.info("Start typing to search for a company or ticker.")
 
-# === Risk Profile ===
+# === Risk Profile Select ===
 risk = st.selectbox("🎯 Risk Profile", ["conservative", "moderate", "aggressive"])
 
-# === Agent + Simulation Run ===
+# === Data Period and Frequency ===
+col1, col2 = st.columns(2)
+with col1:
+    selected_period = st.selectbox("📅 Data Period", ["5y", "10y"])
+with col2:
+    freq_map = {"Yearly": "Y", "Quarterly": "Q", "Monthly": "M"}
+    selected_freq_label = st.selectbox("⏱️ Return Interval", list(freq_map.keys()))
+    selected_freq = freq_map[selected_freq_label]
+
+# === Run AI Agents and Trader ===
 if selected_ticker:
     if st.button("🚀 Run AI Agents"):
         with st.spinner("Running Analyst and Strategist Agents..."):
@@ -89,3 +127,11 @@ if selected_ticker:
         st.markdown("#### 📊 Performance Summary")
         for label, value in stats.items():
             st.markdown(f"**{label}:** {value}")
+
+    # === Show Historical Returns ===
+    st.subheader("📈 Historical Returns Analysis")
+    return_fig = fetch_returns_plot(selected_ticker, selected_period, selected_freq)
+    if return_fig:
+        st.pyplot(return_fig)
+    else:
+        st.error("Not enough historical data to display returns.")
