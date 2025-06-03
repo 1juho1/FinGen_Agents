@@ -8,3 +8,4 @@ numpy
 scikit-learn
 stable-baselines3
 torch
+feedparser
