@@ -1,0 +1,10 @@
+streamlit
+yfinance
+requests
+matplotlib
+fpdf
+pandas
+numpy
+scikit-learn
+stable-baselines3
+torch
