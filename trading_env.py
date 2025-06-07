@@ -10,6 +10,7 @@ class TradingEnv(gym.Env):
         self.action_space = spaces.Discrete(3)  # 0: Hold, 1: Buy, 2: Sell
         self.observation_space = spaces.Box(low=0, high=np.inf, shape=(3,), dtype=np.float32)
 
+
     def reset(self):
         self.current_step = 0
         self.balance = self.initial_balance
