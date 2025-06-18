@@ -22,7 +22,7 @@ def run_trader_simulation(ticker="TSLA"):
     initial_balance = env.initial_balance
 
     for step in range(len(prices) - 1):
-        action, _ = model.predict(obs, deterministic=True)
+        action, _ = model.predict([obs], deterministic=True)
         obs, reward, done, _ = env.step(action)
 
         if action == 1:
