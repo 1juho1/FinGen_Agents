@@ -7,7 +7,6 @@ from typing import Optional
 import gym
 import numpy as np
 from gymnasium import spaces as gym_spaces
-from stable_baselines3 import PPO
 
 from data_utils import get_price_series
 from trading_env import TradingEnv
@@ -66,6 +65,8 @@ def train_trader_model(
     model_path: str = "trader_model.zip",
 ) -> None:
     """Train the PPO trader and persist it locally."""
+    from stable_baselines3 import PPO
+
     tickers = tickers or ["AAPL", "MSFT", "GOOG", "TSLA", "AMZN", "JPM"]
     env_pool = _build_env_pool(tickers)
     env = MultiEnvWrapper(env_pool)

@@ -12,3 +12,4 @@ feedparser
 openai
 gym
 gymnasium
+flask

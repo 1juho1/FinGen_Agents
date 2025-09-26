@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 _MPL_CACHE = Path(__file__).resolve().parent / ".matplotlib_cache"
 _MPL_CACHE.mkdir(exist_ok=True)
@@ -11,23 +12,27 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from stable_baselines3 import PPO
 
 from data_utils import get_price_series
 from train_trader import train_trader_model
 from trading_env import TradingEnv  # make sure this file exists in your project
 
+if TYPE_CHECKING:  # pragma: no cover - typing only
+    from stable_baselines3 import PPO
+
 MODEL_PATH = Path("trader_model.zip")
 
 
-def _load_or_train_model() -> PPO:
+def _load_or_train_model() -> "PPO":
+    from stable_baselines3 import PPO
+
     if not MODEL_PATH.exists():
         logging.info("Trader model missing. Triggering fresh training run...")
         train_trader_model(model_path=str(MODEL_PATH), total_timesteps=10_000)
     return PPO.load(str(MODEL_PATH))
 
 
-def run_trader_simulation(ticker="TSLA"):
+def run_trader_simulation(ticker="TSLA", *, close_figure: bool = True):
     # === Get 3 months of historical closing prices (fallback to synthetic offline)
     prices = get_price_series(
         ticker,
@@ -102,6 +107,7 @@ def run_trader_simulation(ticker="TSLA"):
     ax.legend()
     ax.grid(True)
     plt.tight_layout()
-    plt.close(fig)  # For Streamlit use
+    if close_figure:
+        plt.close(fig)
 
     return fig, stats

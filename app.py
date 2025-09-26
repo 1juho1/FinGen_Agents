@@ -1,8 +1,9 @@
 import os
+from typing import Optional
+
 import streamlit as st
 import yfinance as yf
 import requests
-import numpy as np
 import matplotlib.pyplot as plt
 from run_pipeline import run_agent_pipeline
 from test_trader import run_trader_simulation
@@ -19,10 +20,39 @@ st.session_state.setdefault("search_query", "")
 st.session_state.setdefault("selected_ticker", None)
 st.session_state.setdefault("selected_ticker_label", None)
 st.session_state.setdefault("agent_snapshot", None)
+st.session_state.setdefault("search_input_raw", st.session_state.get("search_query", ""))
 
 
-# === Visual Defaults ===
-DEFAULT_LOGO = np.full((40, 40, 3), [210, 220, 240], dtype=np.uint8)
+# === Logo Helpers ===
+def _extract_domain(website: Optional[str]) -> Optional[str]:
+    if not website:
+        return None
+    clean = website.replace("https://", "").replace("http://", "")
+    clean = clean.split("/")[0]
+    return clean or None
+
+
+@st.cache_data(show_spinner=False)
+def _download_image(url: str) -> Optional[bytes]:
+    try:
+        response = requests.get(url, timeout=2)
+        if response.status_code == 200 and response.headers.get("Content-Type", "").startswith("image"):
+            return response.content
+    except Exception:
+        return None
+    return None
+
+
+def _get_logo_bytes(domain: Optional[str], fallback_url: Optional[str]) -> Optional[bytes]:
+    if domain:
+        data = _download_image(f"https://logo.clearbit.com/{domain}")
+        if data:
+            return data
+    if fallback_url:
+        data = _download_image(fallback_url)
+        if data:
+            return data
+    return None
 
 
 # === Fetch Return Data ===
@@ -69,29 +99,21 @@ def search_tickers_live(query):
                 name = item["shortname"]
                 price = item.get("regularMarketPrice")
                 currency = item.get("currency", "")
-                website = item.get("website") or ""
-                domain = (
-                    website.replace("https://", "")
-                    .replace("http://", "")
-                    .split("/")[0]
-                    if website
-                    else ""
-                )
-                if not domain or not price:
+                website = item.get("website")
+                domain = _extract_domain(website)
+                fallback_logo_url = item.get("logo_url")
+
+                if not domain or price is None:
                     try:
                         info = yf.Ticker(symbol).info
-                        website = info.get("website", website) or ""
-                        if website:
-                            domain = (
-                                website.replace("https://", "")
-                                .replace("http://", "")
-                                .split("/")[0]
-                            )
-                        price = price or info.get("regularMarketPrice")
+                        website = info.get("website") or website
+                        domain = domain or _extract_domain(website)
+                        price = info.get("regularMarketPrice", price)
                         currency = currency or info.get("currency", "")
+                        fallback_logo_url = fallback_logo_url or info.get("logo_url")
                     except Exception:
                         pass
-                logo_url = f"https://logo.clearbit.com/{domain}" if domain else None
+                logo_bytes = _get_logo_bytes(domain, fallback_logo_url)
                 label_bits = [f"{name} ({symbol})"]
                 if price is not None:
                     label_bits.append(f"{price:.2f} {currency}".strip())
@@ -99,7 +121,7 @@ def search_tickers_live(query):
                     {
                         "label": " - ".join([bit for bit in label_bits if bit]),
                         "symbol": symbol,
-                        "logo": logo_url,
+                        "logo_bytes": logo_bytes,
                     }
                 )
                 if len(suggestions) >= 10:
@@ -109,13 +131,17 @@ def search_tickers_live(query):
         return []
 
 # === UI Input ===
-query = st.text_input(
+raw_query = st.text_input(
     "Search for a Company or Ticker",
     value=st.session_state.get("search_query", ""),
     placeholder="Start typing (min 2 characters)...",
-    key="search_query",
-).strip()
-st.session_state["search_query"] = query
+    key="search_input_raw",
+)
+
+if raw_query != st.session_state.get("search_query", ""):
+    st.session_state["search_query"] = raw_query
+
+query = st.session_state["search_query"].strip()
 selected_ticker = st.session_state.get("selected_ticker")
 
 results_container = st.container()
@@ -129,14 +155,18 @@ if query:
             if results:
                 st.write("### 📋 Matching Companies")
                 for suggestion in results:
-                    col1, col2 = st.columns([1, 6])
-                    with col1:
-                        logo_data = suggestion.get("logo")
-                        if logo_data:
-                            st.image(logo_data, width=40)
-                        else:
-                            st.image(DEFAULT_LOGO, width=40)
-                    with col2:
+                    logo_bytes = suggestion.get("logo_bytes")
+                    if logo_bytes:
+                        col_logo, col_button = st.columns([1, 6])
+                        with col_logo:
+                            st.image(logo_bytes, width=40)
+                        with col_button:
+                            if st.button(suggestion["label"], key=suggestion["symbol"]):
+                                st.session_state["selected_ticker"] = suggestion["symbol"]
+                                st.session_state["selected_ticker_label"] = suggestion["label"]
+                                st.session_state["agent_snapshot"] = None
+                                selected_ticker = suggestion["symbol"]
+                    else:
                         if st.button(suggestion["label"], key=suggestion["symbol"]):
                             st.session_state["selected_ticker"] = suggestion["symbol"]
                             st.session_state["selected_ticker_label"] = suggestion["label"]

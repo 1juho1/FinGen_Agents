@@ -1,0 +1,52 @@
+<svg width="900" height="720" viewBox="0 0 900 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827" />
+      <stop offset="45%" stop-color="#1f3c88" />
+      <stop offset="100%" stop-color="#3f6fe4" />
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101827" />
+      <stop offset="100%" stop-color="#161f38" />
+    </linearGradient>
+    <linearGradient id="chart" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0.05)" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="720" rx="48" fill="url(#bg)" />
+  <rect x="80" y="110" width="560" height="360" rx="28" fill="url(#screen)" stroke="rgba(255,255,255,0.08)" stroke-width="3" />
+  <g opacity="0.9">
+    <path d="M140 370 L220 300 L300 330 L380 250 L460 310 L520 240 L600 270" stroke="url(#chart)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="220" cy="300" r="9" fill="#38bdf8" />
+    <circle cx="380" cy="250" r="9" fill="#38bdf8" />
+    <circle cx="520" cy="240" r="9" fill="#38bdf8" />
+  </g>
+  <g opacity="0.75">
+    <rect x="160" y="410" width="32" height="88" rx="6" fill="url(#bar)" />
+    <rect x="214" y="392" width="32" height="106" rx="6" fill="url(#bar)" />
+    <rect x="268" y="424" width="32" height="74" rx="6" fill="url(#bar)" />
+    <rect x="322" y="368" width="32" height="130" rx="6" fill="url(#bar)" />
+    <rect x="376" y="398" width="32" height="100" rx="6" fill="url(#bar)" />
+    <rect x="430" y="350" width="32" height="148" rx="6" fill="url(#bar)" />
+    <rect x="484" y="380" width="32" height="118" rx="6" fill="url(#bar)" />
+  </g>
+  <rect x="660" y="170" width="170" height="230" rx="28" fill="url(#glass)" stroke="rgba(255,255,255,0.18)" stroke-width="2" />
+  <circle cx="745" cy="210" r="16" fill="#34d399" opacity="0.9" />
+  <rect x="697" y="250" width="96" height="18" rx="9" fill="rgba(255,255,255,0.75)" />
+  <rect x="687" y="285" width="116" height="14" rx="7" fill="rgba(255,255,255,0.35)" />
+  <rect x="687" y="307" width="116" height="14" rx="7" fill="rgba(255,255,255,0.25)" />
+  <rect x="687" y="329" width="116" height="14" rx="7" fill="rgba(255,255,255,0.18)" />
+  <path d="M250 480 H470 L520 530 H200 L250 480 Z" fill="rgba(15,23,42,0.65)" />
+  <rect x="330" y="530" width="90" height="14" rx="7" fill="rgba(255,255,255,0.25)" />
+  <rect x="250" y="580" width="260" height="36" rx="18" fill="rgba(255,255,255,0.12)" />
+  <rect x="310" y="632" width="140" height="38" rx="19" fill="rgba(255,255,255,0.24)" />
+</svg>
