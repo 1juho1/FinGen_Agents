@@ -1,17 +1,45 @@
-import yfinance as yf
-import numpy as np
+import logging
+import os
+from pathlib import Path
+
+_MPL_CACHE = Path(__file__).resolve().parent / ".matplotlib_cache"
+_MPL_CACHE.mkdir(exist_ok=True)
+os.environ.setdefault("MPLCONFIGDIR", str(_MPL_CACHE))
+
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 from stable_baselines3 import PPO
+
+from data_utils import get_price_series
+from train_trader import train_trader_model
 from trading_env import TradingEnv  # make sure this file exists in your project
 
+MODEL_PATH = Path("trader_model.zip")
+
+
+def _load_or_train_model() -> PPO:
+    if not MODEL_PATH.exists():
+        logging.info("Trader model missing. Triggering fresh training run...")
+        train_trader_model(model_path=str(MODEL_PATH), total_timesteps=10_000)
+    return PPO.load(str(MODEL_PATH))
+
+
 def run_trader_simulation(ticker="TSLA"):
-    # === Get 3 months of historical closing prices
-    prices = yf.Ticker(ticker).history(period="3mo")["Close"].dropna().values
+    # === Get 3 months of historical closing prices (fallback to synthetic offline)
+    prices = get_price_series(
+        ticker,
+        period="3mo",
+        min_length=45,
+        fallback_length=90,
+    )
     prices = np.nan_to_num(prices)
 
     # === Initialize environment and load model
     env = TradingEnv(prices)
-    model = PPO.load("trader_model.zip")
+    model = _load_or_train_model()
     obs = env.reset()
 
     # === Run simulation loop
@@ -54,8 +82,20 @@ def run_trader_simulation(ticker="TSLA"):
     # === Plot portfolio value and trade points
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(portfolio_values, label="Portfolio Value", linewidth=2)
-    ax.scatter(buy_steps, [portfolio_values[i] for i in buy_steps], color="green", marker="^", label="Buy")
-    ax.scatter(sell_steps, [portfolio_values[i] for i in sell_steps], color="red", marker="v", label="Sell")
+    ax.scatter(
+        buy_steps,
+        [portfolio_values[i] for i in buy_steps],
+        color="green",
+        marker="^",
+        label="Buy",
+    )
+    ax.scatter(
+        sell_steps,
+        [portfolio_values[i] for i in sell_steps],
+        color="red",
+        marker="v",
+        label="Sell",
+    )
     ax.set_title(f"{ticker} Trader Agent Simulation")
     ax.set_xlabel("Steps")
     ax.set_ylabel("Portfolio Value ($)")

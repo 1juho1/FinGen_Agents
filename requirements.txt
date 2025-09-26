@@ -11,3 +11,4 @@ torch
 feedparser
 openai
 gym
+gymnasium
