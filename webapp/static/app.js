@@ -5,6 +5,7 @@
     const searchResults = document.getElementById('search-results');
     const selectedTickerDisplay = document.getElementById('selected-ticker-display');
     const runButton = document.getElementById('run-button');
+    const runButtonGhost = document.getElementById('run-button-ghost');
     const riskSelect = document.getElementById('risk-select');
     const periodSelect = document.getElementById('period-select');
     const freqSelect = document.getElementById('freq-select');
@@ -372,4 +373,10 @@
     });
     document.addEventListener('click', handleDocumentClick);
     runButton.addEventListener('click', handleRunAgents);
+    if (runButtonGhost) {
+        runButtonGhost.addEventListener('click', () => {
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
 })();

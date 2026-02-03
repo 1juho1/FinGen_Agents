@@ -11,16 +11,35 @@
 </head>
 <body>
     <div class="app-shell">
+        <nav class="topbar">
+            <div class="brand">
+                <div class="brand__mark">NA</div>
+                <div class="brand__text">
+                    <strong>Northern Axis</strong>
+                    <span>Capital Intelligence</span>
+                </div>
+            </div>
+            <div class="topbar__actions">
+                <a class="ghost-btn" href="#results">Insights</a>
+                <a class="ghost-btn" href="#contact">Support</a>
+                <span class="status-dot">Live</span>
+            </div>
+        </nav>
+
         <header class="hero">
             <div class="hero__content">
-                <span class="hero__badge">Northern Axis Intelligence Suite</span>
-                <h1 class="hero__title">Autonomous capital intelligence engineered for modern investment firms.</h1>
-                <p class="hero__subtitle">Surface deep research, stress-test strategies, and model trading performance through a coordinated multi-agent platform.</p>
+                <span class="hero__badge">Institutional-grade AI</span>
+                <h1 class="hero__title">Capital intelligence built for investment desks.</h1>
+                <p class="hero__subtitle">Search any equity, deploy analyst + strategist + trader agents, and review performance telemetry in one crisp console.</p>
                 <ul class="hero__highlights">
-                    <li>Risk-aware analysis with coordinated analyst, strategist, and trader agents</li>
-                    <li>Visual intelligence and live performance telemetry in one console</li>
-                    <li>Accelerated equity coverage with institutional-grade controls</li>
+                    <li>Risk-aware narratives tailored to your mandate</li>
+                    <li>Strategy memos aligned to macro and micro signals</li>
+                    <li>Trader sims with P&L, Sharpe, drawdown snapshots</li>
                 </ul>
+                <div class="hero__cta">
+                    <button id="run-button-ghost" class="ghost-btn ghost-btn--primary" type="button" aria-label="Start by picking a ticker">Start with a ticker</button>
+                    <span class="hero__meta">No PII stored · SOC2-ready patterns</span>
+                </div>
             </div>
             <figure class="hero__visual" aria-hidden="true">
                 <img src="{{ url_for('static', filename='images/hero-placeholder.svg') }}" alt="Stylized computer screens with market data" loading="lazy" />
