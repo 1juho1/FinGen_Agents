@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Northern Axis Intelligence Suite</title>
+    <link rel="stylesheet" href="static/styles.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" />
+</head>
+<body>
+    <div class="app-shell">
+        <nav class="topbar">
+            <div class="brand">
+                <div class="brand__mark">NA</div>
+                <div class="brand__text">
+                    <strong>Northern Axis</strong>
+                    <span>Capital Intelligence</span>
+                </div>
+            </div>
+            <div class="topbar__actions">
+                <a class="ghost-btn" href="#results">Insights</a>
+                <a class="ghost-btn" href="#contact">Support</a>
+                <span class="status-dot">Live</span>
+            </div>
+        </nav>
+
+        <header class="hero">
+            <div class="hero__content">
+                <span class="hero__badge">Institutional-grade AI</span>
+                <h1 class="hero__title">Capital intelligence built for investment desks.</h1>
+                <p class="hero__subtitle">Search any equity, deploy analyst + strategist + trader agents, and review performance telemetry in one crisp console.</p>
+                <ul class="hero__highlights">
+                    <li>Risk-aware narratives tailored to your mandate</li>
+                    <li>Strategy memos aligned to macro and micro signals</li>
+                    <li>Trader sims with P&L, Sharpe, drawdown snapshots</li>
+                </ul>
+                <div class="hero__cta">
+                    <button id="run-button-ghost" class="ghost-btn ghost-btn--primary" type="button" aria-label="Start by picking a ticker">Start with a ticker</button>
+                    <span class="hero__meta">No PII stored · SOC2-ready patterns</span>
+                </div>
+            </div>
+            <figure class="hero__visual" aria-hidden="true">
+                <img src="static/images/hero-placeholder.svg" alt="Stylized computer screens with market data" loading="lazy" />
+            </figure>
+        </header>
+
+        <main class="app-main">
+            <section class="panel panel--glass">
+                <div class="panel__header">
+                    <h2 class="panel-title">Configure your mandate</h2>
+                    <p class="panel-subtitle">Search any public equity, calibrate risk posture, and define the historical horizon before deploying the agent suite.</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-field form-field--wide">
+                        <label for="search-input">Company or ticker</label>
+                        <div class="search-box">
+                            <input id="search-input" type="text" placeholder="Microsoft, MSFT, etc." autocomplete="off" />
+                            <ul id="search-results" class="search-results hidden"></ul>
+                        </div>
+                        <small id="selected-ticker-display" class="selected-indicator hidden"></small>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="risk-select">Risk profile</label>
+                        <select id="risk-select">
+                            <option value="conservative">Conservative</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="aggressive">Aggressive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="period-select">Data period</label>
+                        <select id="period-select">
+                            <option value="5y" selected>Last 5 years</option>
+                            <option value="10y">Last 10 years</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="freq-select">Return interval</label>
+                        <select id="freq-select">
+                            <option value="Y">Yearly</option>
+                            <option value="Q">Quarterly</option>
+                            <option value="M">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button id="run-button" class="primary" disabled>Launch Intelligence</button>
+                </div>
+            </section>
+
+            <section id="status" class="status hidden"></section>
+
+            <section id="results" class="panel panel--glass hidden">
+                <div class="panel__header">
+                    <h2 class="panel-title">Insights workbench</h2>
+                    <p class="panel-subtitle">Cross-validate analyst commentary, strategy formation, and execution performance in real time.</p>
+                </div>
+
+                <div class="results-grid">
+                    <article class="result-card">
+                        <h3>Analyst brief</h3>
+                        <div id="analyst-output" class="result-body"></div>
+                    </article>
+
+                    <article class="result-card">
+                        <h3>Strategy memo</h3>
+                        <div id="strategist-output" class="result-body"></div>
+                    </article>
+                </div>
+
+                <div class="results-grid">
+                    <article class="result-card">
+                        <h3>Trader simulation</h3>
+                        <img id="trader-chart" class="chart" alt="Trader simulation chart" />
+                        <ul id="trader-stats" class="stats"></ul>
+                    </article>
+
+                    <article class="result-card">
+                        <h3>Historical returns</h3>
+                        <img id="returns-chart" class="chart" alt="Historical returns chart" />
+                        <p id="returns-empty" class="muted hidden">Not enough historical data to display returns.</p>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <small>© 2025 Northern Axis Intelligence. Powered by Flask, OpenAI agents, and Matplotlib.</small>
+        </footer>
+    </div>
+
+    <script>
+        // TODO: replace YOUR_API_BASE with your deployed Flask API host (no trailing slash).
+        const API_BASE = "https://YOUR_API_BASE";
+        window.APP_CONFIG = {
+            searchEndpoint: `${API_BASE}/api/search`,
+            runEndpoint: `${API_BASE}/api/run`,
+        };
+    </script>
+    <script src="static/app.js" defer></script>
+</body>
+</html>
