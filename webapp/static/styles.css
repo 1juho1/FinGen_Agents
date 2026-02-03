@@ -578,15 +578,86 @@ button.primary:not(:disabled):hover {
         padding: 1.75rem;
     }
 
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.7rem;
+        position: static;
+        margin: 0 0 0.5rem;
+    }
+
+    .topbar__actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .brand__mark {
+        width: 38px;
+        height: 38px;
+        font-size: 0.95rem;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero__title {
+        font-size: 2rem;
+    }
+
+    .hero__cta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .hero__highlights li {
         flex-direction: row;
         align-items: center;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart {
+        max-height: 320px;
+        object-fit: contain;
     }
 
     .search-results {
         position: static;
         max-height: none;
         box-shadow: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .app-shell {
+        padding: 1.4rem;
+    }
+
+    .panel {
+        padding: 1.4rem;
+    }
+
+    .hero__badge {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+    }
+
+    button.primary,
+    .ghost-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field--wide {
+        grid-column: span 1;
     }
 }
 
